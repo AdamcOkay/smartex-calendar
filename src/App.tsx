@@ -1,25 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import { Routes, Route } from "react-router-dom";
+
+import { ModeInterface, DayInterface } from "./types";
+
+import { GlobalStyles } from "./styles/GlobalStyles";
+import { Container } from "./styles/layout/Container";
+import "react-datepicker/dist/react-datepicker.css";
+
+import { Nav } from "./components/Nav/Nav";
+import { Modes, Day, Range } from "./pages";
 
 function App() {
+  const [modes, setModes] = useState<ModeInterface[]>([]);
+  const [days, setDays] = useState<DayInterface[]>([]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <GlobalStyles />
+      <Container>
+        <h1>Управление графиком рабочего времени</h1>
+        <Nav />
+        <Routes>
+          <Route path="/*" element={<Modes modes={modes} />} />
+          <Route path="/day" element={<Day />} />
+          <Route path="/range" element={<Range />} />
+        </Routes>
+      </Container>
+    </>
   );
 }
 
