@@ -7,7 +7,6 @@ export const ModesList = styled.div`
 
 export const ErrText = styled.p`
   margin-bottom: 0.5rem;
-  font-size: 0.9rem;
   text-align: center;
   color: rgba(var(--clr-blue-400));
 `;

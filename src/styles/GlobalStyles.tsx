@@ -16,7 +16,7 @@ export const GlobalStyles = createGlobalStyle`
 
     body{
         font-family: 'Ubuntu', sans-serif;
-        background-color: #F9F7F7;
+        background-color: rgb(var(--clr-white-400));
         padding-top: 5rem;
     }
 

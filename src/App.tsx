@@ -21,7 +21,10 @@ function App() {
         <h1>Управление графиком рабочего времени</h1>
         <Nav />
         <Routes>
-          <Route path="/*" element={<Modes modes={modes} />} />
+          <Route
+            path="/*"
+            element={<Modes modes={modes} setModes={setModes} />}
+          />
           <Route path="/day" element={<Day />} />
           <Route path="/range" element={<Range />} />
         </Routes>

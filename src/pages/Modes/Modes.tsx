@@ -1,77 +1,120 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import { handleInputChange } from "../../helpers/handleInputChange";
+import { newMode } from "../../helpers/newMode";
+import { updateModes } from "../../helpers/updateModes";
+
+import { ModeInterface, ModeProps, FormInterface } from "../../types";
 
 import { MainLayout } from "../../styles/layout/MainLayout";
 import { MainSidebar } from "../../styles/layout/MainSidebar";
-
-import { Toggle } from "../../components/Toggle";
-import {
-  ButtonsWrapper,
-  MainButton,
-  CancelButton,
-} from "../../styles/components/Buttons";
+import { Form } from "../../components/Form";
 
 import { ModesList, ErrText, ModeButton, AddMode } from "./StyledModes";
-import { InputWrapper, InputLabel, Input } from "../../styles/components/Input";
 
-import { ModeInterface } from "../../types";
-interface ModesProps {
-  modes: ModeInterface[];
-}
-
-export const Modes: React.FC<ModesProps> = ({ modes }) => {
+export const Modes: React.FC<ModeProps> = ({ modes, setModes }) => {
   const [activeMode, setActiveMode] = useState<ModeInterface | null>(null);
+  const [formData, setFormData] = useState<FormInterface[]>([]);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!modes || !activeMode) return;
+
+    const updatedModes = updateModes(activeMode, modes);
+
+    setModes([...updatedModes]);
+  };
+
+  useEffect(() => {
+    setActiveMode(modes[0] || null);
+  }, []);
+
+  useEffect(() => {
+    if (!activeMode) return;
+
+    setFormData([
+      {
+        inputLabel: "Название",
+        inputName: "modeName",
+        inputType: "text",
+        inputRequired: true,
+        inputValue: activeMode.modeName,
+      },
+      {
+        inputLabel: "Рабочий день",
+        inputName: "isWorkingDay",
+        inputType: "checkbox",
+        inputRequired: false,
+        inputChecked: activeMode.isWorkingDay,
+      },
+      {
+        inputLabel: "Время начала",
+        inputName: "startTime",
+        inputType: "text",
+        inputRequired: false,
+        inputValue: activeMode.startTime,
+      },
+      {
+        inputLabel: "Время завершения",
+        inputName: "endTime",
+        inputType: "text",
+        inputRequired: false,
+        inputValue: activeMode.endTime,
+      },
+      {
+        inputLabel: "Текст уведомления",
+        inputName: "notification",
+        inputType: "text",
+        inputRequired: true,
+        inputValue: activeMode.notification,
+      },
+    ]);
+  }, [activeMode]);
 
   return (
     <MainLayout>
       <MainSidebar>
         <ModesList>
-          {modes.length > 0 ? (
+          {modes.length > 0 &&
             modes.map((mode: ModeInterface) => (
               <ModeButton
-                key={mode.modeName}
-                onClick={() => setActiveMode(mode)}
+                key={mode.id}
+                onClick={() => setActiveMode({ ...mode })}
               >
                 {mode.modeName}
               </ModeButton>
-            ))
-          ) : (
-            <ErrText>
-              Нет существующих режимов работы. Пожалуйста добавьте новый режим
-            </ErrText>
-          )}
+            ))}
 
-          <AddMode onClick={() => setActiveMode(null)}>
+          <AddMode
+            onClick={() => {
+              newMode(setActiveMode);
+            }}
+          >
             + Добавить режим
           </AddMode>
         </ModesList>
       </MainSidebar>
 
-      <div>
-        <InputWrapper>
-          <InputLabel>Название</InputLabel>
-          <Input />
-        </InputWrapper>
-        <InputWrapper>
-          <InputLabel>Рабочий день</InputLabel>
-          <Toggle />
-        </InputWrapper>
-        <InputWrapper>
-          <InputLabel>Время начала</InputLabel>
-          <Input />
-        </InputWrapper>
-        <InputWrapper>
-          <InputLabel>Время завершения</InputLabel>
-          <Input />
-        </InputWrapper>
-        <InputWrapper>
-          <InputLabel>Текст уведомления</InputLabel>
-          <Input />
-        </InputWrapper>
-        <ButtonsWrapper>
-          <CancelButton>Отменить</CancelButton>
-          <MainButton>Сохранить</MainButton>
-        </ButtonsWrapper>
-      </div>
+      {activeMode !== null ? (
+        <Form
+          formData={formData}
+          onChangeParams={{
+            activeMode: { ...activeMode },
+            setActiveMode: setActiveMode,
+          }}
+          onInputChange={handleInputChange}
+          onCancel={() => {
+            setActiveMode({ ...activeMode } || null);
+          }}
+          onSubmit={(e) => {
+            handleFormSubmit(e);
+          }}
+        />
+      ) : (
+        <ErrText>
+          Нет существующих режимов работы. Пожалуйста добавьте новый режим
+        </ErrText>
+      )}
     </MainLayout>
   );
 };

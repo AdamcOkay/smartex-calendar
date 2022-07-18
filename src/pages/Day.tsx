@@ -28,7 +28,7 @@ export const Day = () => {
           inline
         />
       </div>
-      <div>
+      <form>
         <InputWrapper>
           <InputLabel>Рабочий день</InputLabel>
           <Toggle />
@@ -49,7 +49,7 @@ export const Day = () => {
           <CancelButton>Отменить</CancelButton>
           <MainButton>Сохранить</MainButton>
         </ButtonsWrapper>
-      </div>
+      </form>
     </MainLayout>
   );
 };
