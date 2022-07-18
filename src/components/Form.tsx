@@ -12,18 +12,26 @@ import {
 
 export const Form: React.FC<
   FormProps & React.FormHTMLAttributes<HTMLFormElement>
-> = ({ formData, onInputChange, onChangeParams, onCancel, ...rest }) => {
+> = ({
+  formData,
+  stateToListen,
+  onInputChange,
+  onChangeParams,
+  onCancel,
+  ...rest
+}) => {
   const [timeRequired, setTimeRequired] = useState(false);
 
-  //   Меняем required для времени, в зависимости от состояния чекбокса
+  // Меняем required для времени, в зависимости от состояния чекбокса
   const changeTimeRequired = (checked: boolean | undefined) => {
     if (typeof checked === "undefined") return;
     setTimeRequired(!checked);
   };
 
+  // Слушаем переданный state, чтобы сбрасывать required
   useEffect(() => {
     setTimeRequired(false);
-  }, []);
+  }, [stateToListen]);
 
   return (
     <form {...rest}>

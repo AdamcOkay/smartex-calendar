@@ -14,6 +14,7 @@ import { ModesList, ErrText, ModeButton, AddMode } from "./StyledModes";
 
 export const Modes: React.FC<ModeProps> = ({ modes, setModes }) => {
   const [activeMode, setActiveMode] = useState<ModeInterface | null>(null);
+  const [activeModeIndex, setActiveModeIndex] = useState(0);
   const [formData, setFormData] = useState<FormInterface[]>([]);
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -76,10 +77,13 @@ export const Modes: React.FC<ModeProps> = ({ modes, setModes }) => {
       <MainSidebar>
         <ModesList>
           {modes.length > 0 &&
-            modes.map((mode: ModeInterface) => (
+            modes.map((mode: ModeInterface, index: number) => (
               <ModeButton
                 key={mode.id}
-                onClick={() => setActiveMode({ ...mode })}
+                onClick={() => {
+                  setActiveModeIndex(index);
+                  setActiveMode({ ...mode });
+                }}
               >
                 {mode.modeName}
               </ModeButton>
@@ -87,6 +91,7 @@ export const Modes: React.FC<ModeProps> = ({ modes, setModes }) => {
 
           <AddMode
             onClick={() => {
+              setActiveModeIndex(modes.length);
               newMode(setActiveMode);
             }}
           >
@@ -98,13 +103,14 @@ export const Modes: React.FC<ModeProps> = ({ modes, setModes }) => {
       {activeMode !== null ? (
         <Form
           formData={formData}
+          stateToListen={activeModeIndex}
           onChangeParams={{
             activeMode: { ...activeMode },
             setActiveMode: setActiveMode,
           }}
           onInputChange={handleInputChange}
           onCancel={() => {
-            setActiveMode({ ...activeMode } || null);
+            setActiveMode(modes[activeModeIndex] || null);
           }}
           onSubmit={(e) => {
             handleFormSubmit(e);

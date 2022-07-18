@@ -28,6 +28,7 @@ export interface FormInterface {
 
 export interface FormProps {
   formData: FormInterface[];
+  stateToListen: number | string;
   onInputChange: ReturnType<typeof Function>;
   onChangeParams: {
     activeMode: ModeInterface;
