@@ -1,20 +1,12 @@
 export interface ModeInterface {
+  date?: number;
+  weekDay?: number;
   id: string;
   modeName: string;
   isWorkingDay: boolean;
   startTime: string;
   endTime: string;
   notification: string;
-}
-
-export interface ModeProps {
-  modes: ModeInterface[];
-  setModes: React.Dispatch<React.SetStateAction<ModeInterface[]>>;
-}
-
-export interface DayInterface extends ModeInterface {
-  date: string;
-  weekdayIndex: number;
 }
 
 export interface FormInterface {
@@ -26,13 +18,28 @@ export interface FormInterface {
   inputChecked?: boolean;
 }
 
+export interface ModeProps {
+  modes: ModeInterface[];
+  setModes: React.Dispatch<React.SetStateAction<ModeInterface[]>>;
+}
+
+export interface DayProps {
+  days: ModeInterface[];
+  setDays: React.Dispatch<React.SetStateAction<ModeInterface[]>>;
+}
+
+export interface RangeProps {
+  days: ModeInterface[];
+  setDays: React.Dispatch<React.SetStateAction<ModeInterface[]>>;
+  modes: ModeInterface[];
+}
+
 export interface FormProps {
   formData: FormInterface[];
-  stateToListen: number | string;
-  onInputChange: ReturnType<typeof Function>;
+  stateToListen: number | string | Date;
   onChangeParams: {
-    activeMode: ModeInterface;
-    setActiveMode: React.Dispatch<React.SetStateAction<ModeInterface | null>>;
+    state: any;
+    setState: React.Dispatch<React.SetStateAction<any>>;
   };
   onCancel: ReturnType<typeof Function>;
 }

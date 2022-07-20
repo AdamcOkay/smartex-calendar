@@ -9,7 +9,7 @@ export const SelectWrapper = styled.div`
     content: "\\25BE";
     position: absolute;
     top: 50%;
-    right: 0.5rem;
+    right: 0.25rem;
     transform: translateY(-50%);
     color: rgb(var(--clr-blue-500));
   }

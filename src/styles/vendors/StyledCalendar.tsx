@@ -14,7 +14,26 @@ export const StyledCalendar = css`
   }
 
   .react-datepicker__current-month {
+    display: none;
+  }
+
+  .react-datepicker__month-dropdown-container {
+    display: block;
+  }
+
+  .react-datepicker__month-select,
+  .react-datepicker__year-select {
+    display: block;
+    width: 100%;
+    -webkit-appearance: none;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-weight: 700;
+    line-height: 100%;
     color: rgb(var(--clr-blue-500));
+    text-align: center;
     text-transform: capitalize;
   }
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import { handleInputChange } from "../../helpers/handleInputChange";
-import { newMode } from "../../helpers/newMode";
-import { updateModes } from "../../helpers/updateModes";
+import { newClearMode } from "../../helpers/newClearMode";
+import { updateData } from "../../helpers/updateData";
+import { setToLocalStorage } from "../../helpers/setToLocalStorage";
 
 import { ModeInterface, ModeProps, FormInterface } from "../../types";
 
@@ -17,18 +17,24 @@ export const Modes: React.FC<ModeProps> = ({ modes, setModes }) => {
   const [activeModeIndex, setActiveModeIndex] = useState(0);
   const [formData, setFormData] = useState<FormInterface[]>([]);
 
+  const handleAddClick = () => {
+    const newMode = newClearMode();
+    setActiveMode(newMode);
+  };
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!modes || !activeMode) return;
 
-    const updatedModes = updateModes(activeMode, modes);
+    const updatedModes = updateData(activeMode, modes);
 
-    setModes([...updatedModes]);
+    setModes(updatedModes);
+    setToLocalStorage("modes", JSON.stringify(updatedModes));
   };
 
   useEffect(() => {
     setActiveMode(modes[0] || null);
-  }, []);
+  }, [modes]);
 
   useEffect(() => {
     if (!activeMode) return;
@@ -92,7 +98,7 @@ export const Modes: React.FC<ModeProps> = ({ modes, setModes }) => {
           <AddMode
             onClick={() => {
               setActiveModeIndex(modes.length);
-              newMode(setActiveMode);
+              handleAddClick();
             }}
           >
             + Добавить режим
@@ -105,12 +111,13 @@ export const Modes: React.FC<ModeProps> = ({ modes, setModes }) => {
           formData={formData}
           stateToListen={activeModeIndex}
           onChangeParams={{
-            activeMode: { ...activeMode },
-            setActiveMode: setActiveMode,
+            state: { ...activeMode },
+            setState: setActiveMode,
           }}
-          onInputChange={handleInputChange}
           onCancel={() => {
-            setActiveMode(modes[activeModeIndex] || null);
+            setActiveMode(
+              modes[activeModeIndex] || modes[activeModeIndex - 1] || null
+            );
           }}
           onSubmit={(e) => {
             handleFormSubmit(e);

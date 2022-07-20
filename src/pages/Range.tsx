@@ -1,15 +1,104 @@
-import React from "react";
+import React, { ChangeEvent, useState } from "react";
+
+import DatePicker from "react-datepicker";
+
+import subDays from "date-fns/subDays";
+import ru from "date-fns/locale/ru";
+
+import { RangeProps, ModeInterface } from "../types";
+import { getDatesInRage } from "../helpers/getDatesInRage";
+import { renderDateModes } from "../helpers/renderDateModes";
+import { newClearMode } from "../helpers/newClearMode";
+import { isDataExists } from "../helpers/isDataExists";
+import { clearWeek } from "../helpers/clearWeek";
+import { setToLocalStorage } from "../helpers/setToLocalStorage";
 
 import { MainLayout } from "../styles/layout/MainLayout";
-import { Table, Thead, Tbody, Th, Td } from "../styles/components/Table";
+import { Table, Thead, Tbody, Th, Tr, Td } from "../styles/components/Table";
 import { SelectWrapper, Select } from "../styles/components/Select";
 import { MainButton } from "../styles/components/Buttons";
 
-export const Range = () => {
+export const Range: React.FC<RangeProps> = ({ days, setDays, modes }) => {
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [rangeDates, setRangeDates] = useState<ModeInterface[]>([
+    {
+      date: new Date().getTime(),
+      weekDay: new Date().getDay() === 0 ? 7 : new Date().getDay(),
+      ...newClearMode(),
+    },
+  ]);
+
+  const [weekData, setWeekData] = useState(clearWeek());
+
+  const onRangeChange = (dates: [Date, Date]) => {
+    const [start, end] = dates;
+
+    setStartDate(start);
+    setEndDate(end);
+
+    start.setHours(0, 0, 0, 0);
+
+    if (end) {
+      end.setHours(0, 0, 0, 0);
+    }
+
+    const datesInRange = getDatesInRage(start, end || start);
+    const datesArray = renderDateModes(datesInRange, days);
+
+    setRangeDates(datesArray);
+    setWeekData(clearWeek());
+  };
+
+  const handleSelectChange = (
+    e: ChangeEvent<HTMLSelectElement>,
+    dayIndex: number
+  ) => {
+    const newWeekData = [...weekData];
+    newWeekData[dayIndex].mode = JSON.parse(e.target.value);
+
+    setWeekData(newWeekData);
+
+    const updatedDates = rangeDates.map((date) => {
+      if (date.weekDay === newWeekData[dayIndex].weekDay) {
+        return { ...date, ...newWeekData[dayIndex].mode };
+      } else {
+        return { ...date };
+      }
+    });
+
+    setRangeDates(updatedDates);
+  };
+
+  const handleSaveClick = () => {
+    const isValid = rangeDates.every((date) => date.modeName !== "");
+
+    if (isValid) {
+      setDays([...days, ...rangeDates]);
+
+      setToLocalStorage("days", JSON.stringify([...days, ...rangeDates]));
+    } else {
+      alert("Заполните все доступные дни недели");
+      return;
+    }
+  };
+
   return (
     <MainLayout>
       <div>
         <h2>Выберите период</h2>
+        <DatePicker
+          showMonthDropdown
+          showYearDropdown
+          locale={ru}
+          dropdownMode="select"
+          onChange={onRangeChange}
+          minDate={subDays(new Date(), 6)}
+          startDate={startDate}
+          endDate={endDate}
+          selectsRange
+          inline
+        />
       </div>
       <div>
         <h2>Настройте дни недели выбранного периода</h2>
@@ -22,79 +111,49 @@ export const Range = () => {
             </tr>
           </Thead>
           <Tbody>
-            <tr>
-              <Td>Понедельник</Td>
-              <Td>
-                <SelectWrapper>
-                  <Select name="" id="">
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                  </Select>
-                </SelectWrapper>
-              </Td>
-              <Td>9:00 - 20:00</Td>
-            </tr>
-            <tr>
-              <Td>Понедельник</Td>
-              <Td>
-                <SelectWrapper>
-                  <Select name="" id="">
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                  </Select>
-                </SelectWrapper>
-              </Td>
-              <Td>9:00 - 20:00</Td>
-            </tr>
-            <tr>
-              <Td>Понедельник</Td>
-              <Td>
-                <SelectWrapper>
-                  <Select name="" id="">
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                  </Select>
-                </SelectWrapper>
-              </Td>
-              <Td>9:00 - 20:00</Td>
-            </tr>
-            <tr>
-              <Td>Понедельник</Td>
-              <Td>
-                <SelectWrapper>
-                  <Select name="" id="">
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                  </Select>
-                </SelectWrapper>
-              </Td>
-              <Td>9:00 - 20:00</Td>
-            </tr>
-            <tr>
-              <Td>Понедельник</Td>
-              <Td>
-                <SelectWrapper>
-                  <Select name="" id="">
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                    <option value="">sad</option>
-                  </Select>
-                </SelectWrapper>
-              </Td>
-              <Td>9:00 - 20:00</Td>
-            </tr>
+            {weekData.map((day, index) => {
+              const isDayExistInWeek =
+                isDataExists(day.weekDay, rangeDates, "weekDay") || 0;
+
+              const isActive =
+                day.weekDay === rangeDates[isDayExistInWeek || 0].weekDay
+                  ? true
+                  : false;
+
+              return (
+                <Tr key={day.dayName} isActive={isActive}>
+                  <Td>{day.dayName}</Td>
+                  <Td>
+                    <SelectWrapper>
+                      <Select
+                        value={JSON.stringify(day.mode)}
+                        name="modesSelect"
+                        onChange={(e) => {
+                          handleSelectChange(e, index);
+                        }}
+                      >
+                        <option value={JSON.stringify(newClearMode())}>
+                          Выберите режим
+                        </option>
+                        {modes.map((mode) => (
+                          <option key={mode.id} value={JSON.stringify(mode)}>
+                            {mode.modeName}
+                          </option>
+                        ))}
+                      </Select>
+                    </SelectWrapper>
+                  </Td>
+                  <Td>
+                    {day.mode.startTime}-{day.mode.endTime}
+                  </Td>
+                </Tr>
+              );
+            })}
           </Tbody>
         </Table>
-        <MainButton>Применить изменения на период</MainButton>
+        <MainButton onClick={handleSaveClick}>
+          Применить изменения на период
+        </MainButton>
       </div>
     </MainLayout>
   );

@@ -2,8 +2,8 @@ import { ModeInterface } from "../types";
 
 export const handleInputChange = (
   e: React.ChangeEvent<HTMLInputElement>,
-  activeMode: ModeInterface,
-  setActiveMode: ReturnType<typeof Function>
+  state: ModeInterface,
+  setState: ReturnType<typeof Function>
 ) => {
   const target = e.target;
   const name = target.name;
@@ -11,7 +11,7 @@ export const handleInputChange = (
 
   let value: string | boolean = "";
 
-  if (!activeMode) return;
+  if (!state) return;
 
   // Обновляем данные в инпутах/чекбоксах
   if (type === "text") {
@@ -19,9 +19,9 @@ export const handleInputChange = (
   }
 
   if (type === "checkbox") {
-    value = !activeMode.isWorkingDay;
+    value = !state.isWorkingDay;
   }
 
   // Переписываем текущие данные на обновленные
-  setActiveMode({ ...activeMode, [name]: value });
+  setState({ ...state, [name]: value });
 };

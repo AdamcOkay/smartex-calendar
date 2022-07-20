@@ -38,6 +38,11 @@ export const Th = styled.th`
   color: rgba(var(--clr-blue-500), 0.5);
 `;
 
+export const Tr = styled.tr<{ isActive: boolean }>`
+  pointer-events: ${(props) => (props.isActive ? "auto" : "none")};
+  opacity: ${(props) => (props.isActive ? "1" : "0.1")};
+`;
+
 export const Td = styled.td`
   text-align: center;
 `;

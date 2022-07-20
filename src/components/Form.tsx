@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { FormInterface, FormProps } from "../types";
+import { handleInputChange } from "../helpers/handleInputChange";
 
 import { InputWrapper, Input, InputLabel } from "../styles/components/Input";
 import { Toggle } from "./Toggle";
@@ -12,14 +13,7 @@ import {
 
 export const Form: React.FC<
   FormProps & React.FormHTMLAttributes<HTMLFormElement>
-> = ({
-  formData,
-  stateToListen,
-  onInputChange,
-  onChangeParams,
-  onCancel,
-  ...rest
-}) => {
+> = ({ formData, stateToListen, onChangeParams, onCancel, ...rest }) => {
   const [timeRequired, setTimeRequired] = useState(false);
 
   // Меняем required для времени, в зависимости от состояния чекбокса
@@ -44,10 +38,10 @@ export const Form: React.FC<
               type="text"
               value={input.inputValue}
               onChange={(e) => {
-                onInputChange(
+                handleInputChange(
                   e,
-                  onChangeParams.activeMode,
-                  onChangeParams.setActiveMode
+                  onChangeParams.state,
+                  onChangeParams.setState
                 );
               }}
               required={
@@ -62,10 +56,10 @@ export const Form: React.FC<
               checked={input.inputChecked}
               onChange={(e) => {
                 changeTimeRequired(input.inputChecked);
-                onInputChange(
+                handleInputChange(
                   e,
-                  onChangeParams.activeMode,
-                  onChangeParams.setActiveMode
+                  onChangeParams.state,
+                  onChangeParams.setState
                 );
               }}
             />

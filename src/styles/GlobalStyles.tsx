@@ -26,5 +26,7 @@ export const GlobalStyles = createGlobalStyle`
 
     h2{
         font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: rgb(var(--clr-blue-400));
     }
 `;
