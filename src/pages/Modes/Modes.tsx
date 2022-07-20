@@ -18,6 +18,7 @@ export const Modes: React.FC<ModeProps> = ({ modes, setModes }) => {
   const [formData, setFormData] = useState<FormInterface[]>([]);
 
   const handleAddClick = () => {
+    // Создаем чистый режим работы и делаем его активным
     const newMode = newClearMode();
     setActiveMode(newMode);
   };
@@ -26,12 +27,16 @@ export const Modes: React.FC<ModeProps> = ({ modes, setModes }) => {
     e.preventDefault();
     if (!modes || !activeMode) return;
 
+    // Обновляем данные
+    // Добавляем режим, если его нет в массиве. Обновляем существующий, если режим есть в массиве
     const updatedModes = updateData(activeMode, modes);
 
+    // Сохраняем новый/обновленный режим
     setModes(updatedModes);
     setToLocalStorage("modes", JSON.stringify(updatedModes));
   };
 
+  // Обновляем активный режим
   useEffect(() => {
     setActiveMode(modes[0] || null);
   }, [modes]);
@@ -39,6 +44,7 @@ export const Modes: React.FC<ModeProps> = ({ modes, setModes }) => {
   useEffect(() => {
     if (!activeMode) return;
 
+    // Обновляем данные формы
     setFormData([
       {
         inputLabel: "Название",

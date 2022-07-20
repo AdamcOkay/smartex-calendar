@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-
 import { FormInterface, FormProps } from "../types";
 import { handleInputChange } from "../helpers/handleInputChange";
 
 import { InputWrapper, Input, InputLabel } from "../styles/components/Input";
+import { TimeInput } from "./TimeInput";
 import { Toggle } from "./Toggle";
 import {
   ButtonsWrapper,
@@ -32,10 +32,11 @@ export const Form: React.FC<
       {formData.map((input: FormInterface) => (
         <InputWrapper key={input.inputName}>
           <InputLabel>{input.inputLabel}</InputLabel>
-          {input.inputType === "text" ? (
-            <Input
+          {input.inputType === "text" &&
+          (input.inputName === "startTime" || input.inputName === "endTime") ? (
+            <TimeInput
               name={input.inputName}
-              type="text"
+              type={input.inputType}
               value={input.inputValue}
               onChange={(e) => {
                 handleInputChange(
@@ -44,13 +45,9 @@ export const Form: React.FC<
                   onChangeParams.setState
                 );
               }}
-              required={
-                input.inputName === "startTime" || input.inputName === "endTime"
-                  ? timeRequired
-                  : input.inputRequired
-              }
+              required={timeRequired}
             />
-          ) : (
+          ) : input.inputType === "checkbox" ? (
             <Toggle
               name={input.inputName}
               checked={input.inputChecked}
@@ -62,6 +59,20 @@ export const Form: React.FC<
                   onChangeParams.setState
                 );
               }}
+            />
+          ) : (
+            <Input
+              name={input.inputName}
+              type={input.inputType}
+              value={input.inputValue}
+              onChange={(e) => {
+                handleInputChange(
+                  e,
+                  onChangeParams.state,
+                  onChangeParams.setState
+                );
+              }}
+              required={input.inputRequired}
             />
           )}
         </InputWrapper>

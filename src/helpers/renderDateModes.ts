@@ -2,11 +2,15 @@ import { ModeInterface } from "../types";
 import { isDataExists } from "./isDataExists";
 import { newClearMode } from "./newClearMode";
 
+// Проходимся по массиву из промежутка дат
+//  и возвращаем полноценный объект со всеми нужными параметрами
 export const renderDateModes = (
   dates: Date[],
   daysArray: ModeInterface[]
 ): ModeInterface[] => {
   const dateModes: ModeInterface[] = dates.map((date) => {
+    // Проверяем существует ли дата в массиве из дат с режимами работы
+    // Получаем индекс если существует
     const isDateExists = isDataExists(
       date.getTime(),
       daysArray,
@@ -15,6 +19,7 @@ export const renderDateModes = (
     );
     let dayObject: ModeInterface;
 
+    // Если даты нет в массиве, возвращаем "Чистую" дату
     if (isDateExists === false) {
       const clearMode = newClearMode();
 
@@ -24,6 +29,7 @@ export const renderDateModes = (
         ...clearMode,
       };
     } else {
+      // Если дата есть в массиве, то возвращаем текущую дату
       dayObject = {
         ...daysArray[isDateExists],
       };

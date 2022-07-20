@@ -26,6 +26,7 @@ function App() {
     const storageModes = localStorage.getItem("modes") || JSON.stringify([]);
     const storageDays = localStorage.getItem("days") || JSON.stringify([]);
 
+    // Записываем полученные данные
     setModes(JSON.parse(storageModes));
     setDays(JSON.parse(storageDays));
   }, []);

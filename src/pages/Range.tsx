@@ -29,24 +29,32 @@ export const Range: React.FC<RangeProps> = ({ days, setDays, modes }) => {
     },
   ]);
 
+  // "Чистые" дни недели без привязанных режимов
   const [weekData, setWeekData] = useState(clearWeek());
 
   const onRangeChange = (dates: [Date, Date]) => {
     const [start, end] = dates;
 
+    // Записываем промежуток
     setStartDate(start);
     setEndDate(end);
 
+    // Обнуляем часы, чтобы можно было искать в массиве
     start.setHours(0, 0, 0, 0);
 
     if (end) {
       end.setHours(0, 0, 0, 0);
     }
 
+    // Достаем все даты в промежутке
     const datesInRange = getDatesInRage(start, end || start);
+    // Записываем полученные даты в массив
     const datesArray = renderDateModes(datesInRange, days);
 
+    // Обновляем промежуток дат
     setRangeDates(datesArray);
+
+    // Обнуляем недели
     setWeekData(clearWeek());
   };
 
@@ -54,11 +62,14 @@ export const Range: React.FC<RangeProps> = ({ days, setDays, modes }) => {
     e: ChangeEvent<HTMLSelectElement>,
     dayIndex: number
   ) => {
+    // Приписываем режим к выбранному дню недели
     const newWeekData = [...weekData];
     newWeekData[dayIndex].mode = JSON.parse(e.target.value);
 
+    // Обновляем массив с днями недель
     setWeekData(newWeekData);
 
+    // Обновляем даты в промежутке в зависимости от дня недели
     const updatedDates = rangeDates.map((date) => {
       if (date.weekDay === newWeekData[dayIndex].weekDay) {
         return { ...date, ...newWeekData[dayIndex].mode };
@@ -67,15 +78,17 @@ export const Range: React.FC<RangeProps> = ({ days, setDays, modes }) => {
       }
     });
 
+    // Обновляем промежуток дат
     setRangeDates(updatedDates);
   };
 
   const handleSaveClick = () => {
+    // Проверяем ко всем доступным датам присвоен режим илинет
     const isValid = rangeDates.every((date) => date.modeName !== "");
 
     if (isValid) {
+      // Сохраняем данные
       setDays([...days, ...rangeDates]);
-
       setToLocalStorage("days", JSON.stringify([...days, ...rangeDates]));
     } else {
       alert("Заполните все доступные дни недели");
@@ -112,9 +125,12 @@ export const Range: React.FC<RangeProps> = ({ days, setDays, modes }) => {
           </Thead>
           <Tbody>
             {weekData.map((day, index) => {
+              // Проверяем есть ли текущий день в промежутке
               const isDayExistInWeek =
                 isDataExists(day.weekDay, rangeDates, "weekDay") || 0;
 
+              // Проверяем можно ли менять селект
+              // (если день недели есть в промежутке, то можно менять)
               const isActive =
                 day.weekDay === rangeDates[isDayExistInWeek || 0].weekDay
                   ? true

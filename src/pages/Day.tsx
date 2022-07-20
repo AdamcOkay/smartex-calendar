@@ -24,13 +24,19 @@ export const Day: React.FC<DayProps> = ({ days, setDays }) => {
     e.preventDefault();
     if (!days || !activeDayData) return;
 
+    // Обновляем данные
+    // Добавляем день, если его нет в массиве. Обновляем существующий, если день есть в массиве
     const updatedDays = updateData(activeDayData, days);
 
+    // Обновляем индекс активного дня
     setActiveDayIndex(updatedDays.length - 1);
+
+    // новый/обновленный день
     setDays([...updatedDays]);
     setToLocalStorage("days", JSON.stringify([...updatedDays]));
   };
 
+  // Обновляем активный день
   useEffect(() => {
     setActiveDayData(
       days[activeDayIndex] || {
@@ -77,6 +83,7 @@ export const Day: React.FC<DayProps> = ({ days, setDays }) => {
   useEffect(() => {
     if (!activeDayData) return;
 
+    // Обновляем данные формы
     setFormData([
       {
         inputLabel: "Рабочий день",

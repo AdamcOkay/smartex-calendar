@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import { IMaskInput } from "react-imask";
 
 export const InputWrapper = styled.div`
   display: grid;
@@ -14,7 +15,7 @@ export const InputLabel = styled.label`
   color: rgba(var(--clr-blue-500), 0.5);
 `;
 
-export const Input = styled.input`
+const InputStyles = css`
   width: 100%;
   padding: 0.5rem 1rem;
   background: none;
@@ -25,4 +26,12 @@ export const Input = styled.input`
   &:focus {
     border: 1px solid rgb(var(--clr-blue-500));
   }
+`;
+
+export const Input = styled.input`
+  ${InputStyles}
+`;
+
+export const MaskedInput = styled(IMaskInput)`
+  ${InputStyles}
 `;
